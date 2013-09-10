@@ -1,0 +1,37 @@
+Enquete SMUR
+========================================================
+
+date: septembre 2013
+
+objet: évaluer les dotations SMUR par rapport aux recommandations2013 de la SFMU
+
+init: on récupère le fichier brut et on procède au corrections suivantes:
+- sauvegarde des noms de colonne dans le vecteur *x* pour une exploitation ultérieure. Les "." séparant les mots sont remplaçés par des espaces
+- simplification des noms de colonnes: les 3 prmières identifient l'origine, toutes les suivantes sont transformées en question *Qx* avec la fonction *paste*.
+- suppression de la colonne 46
+suppression de la ligne 4 (2 réponses pour Strasbourg)
+
+```{r init}
+file<-"Enquete_SMUR.csv"
+sm<-read.csv(file,header=TRUE,sep=",")
+x<-names(sm)
+x<-x[-c(1:3,46)]
+x<-gsub("."," ",x,fixed=TRUE)
+a<-c("date","origine","SMUR",paste("Q",1:43,sep=""))
+# ajout d'une colonne ESO (essentiel, souhaitable, optionnel)
+mat<-"EEEEEEEESESEEESOEEEEEESEESEESSEEEEEESESSEE"
+mat<-unlist(strsplit(mat,NULL))
+summary(as.factor(mat))
+
+names(sm)<-a
+x
+sm<-sm[-46]
+sm<-sm[-4,]
+str(sm)
+for(i in 1:40){
+  print(paste("Question ",i," (",mat[i],")",sep=""))
+  print(x[i])
+  pie(table(sm[i+3]),main=paste("Q",i,sep=""))
+}
+
+```
